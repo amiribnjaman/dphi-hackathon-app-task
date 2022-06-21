@@ -1,0 +1,33 @@
+.banner{
+    width: 100%;
+    height: 560px;
+    background: #003145;
+    display: flex;
+    align-items: center;
+}
+.custom-width{
+    width: 73%;
+    margin: 0 auto;
+}
+.br{
+    width: 11px;
+    height: 90px;
+    background: #FFCE5C;
+}
+.summary{
+    width: 100%;
+    height: 150px;
+    background: #002A3B;
+}
+.summary-card{
+    position: relative;
+}
+.summary-card::after {
+    position: absolute;
+    content: '';
+    top: 12px;
+    right: -106px;
+    width: 1px;
+    height: 25px;
+    background: #C4C4C4;
+}
