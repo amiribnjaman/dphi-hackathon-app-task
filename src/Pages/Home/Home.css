@@ -16,7 +16,7 @@
 }
 .summary{
     width: 100%;
-    height: 150px;
+    height: 130px;
     background: #002A3B;
 }
 .summary-card{
@@ -28,6 +28,16 @@
     top: 12px;
     right: -106px;
     width: 1px;
-    height: 25px;
+    height: 22px;
     background: #C4C4C4;
+}
+.participate-card{
+    background: #F8F9FD;
+    border: 0 !important;
+}
+
+.explore-top-part{
+    width: 100%;
+    background: #002A3B;
+    height: 200px;
 }
