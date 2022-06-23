@@ -1,8 +1,10 @@
 import React from 'react';
 import '../Home.css'
 import RocketImg from '../../../assets/icons/PicsArt_04-14-04.42 1.svg'
+import { useNavigate } from 'react-router-dom';
 
 const Banner = () => {
+    const navigate = useNavigate()
     return (
         <div className='banner'>
             <div className='container '>
@@ -14,7 +16,9 @@ const Banner = () => {
                           <h1 className=''>with Global AI Challenges</h1>
                         <p className='my-4 small'>AI Challenges at DPhi simulate real-world problems. It is a great place to put your AI/Data Science skills to test on diverse datasets allowing you to foster learning through competitions.
                         </p>
-                        <div className="btn btn-light mt-3 rounded">Create Challenge</div>
+                        <div
+                        onClick={() => navigate('/create-challenge')}
+                        className="btn btn-light mt-3 rounded">Create Challenge</div>
                         </div>
                     </div>
                     <div  className='col-sm-5 text-center'>
