@@ -16,9 +16,9 @@ const Banner = () => {
                           <h1 className=''>with Global AI Challenges</h1>
                         <p className='my-4 small'>AI Challenges at DPhi simulate real-world problems. It is a great place to put your AI/Data Science skills to test on diverse datasets allowing you to foster learning through competitions.
                         </p>
-                        <div
+                        <button
                         onClick={() => navigate('/create-challenge')}
-                        className="btn btn-light mt-3 rounded">Create Challenge</div>
+                        className="btn btn-light mt-3 rounded">Create Challenge</button>
                         </div>
                     </div>
                     <div  className='col-sm-5 text-center'>

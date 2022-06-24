@@ -1,19 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import './Challenge.css'
+import '../CreateChallenge/Challenge.css'
 import { toast } from 'react-toastify';
+import { useParams } from 'react-router-dom';
 
-const CreateChallenge = () => {
+const UpdateChallenge = () => {
+    const { id } = useParams()
+    const [challengeDetails, setChallengeDetails] = useState({})
+
+    const [name, setName] = useState('')
+    const [s_date, setS_Date] = useState('')
+    const [e_date, setE_Date] = useState('')
+    const [desc, setDesc] = useState('')
+    const [updatelevel, setUpdateLevel] = useState('')
+    const [imgbbLink, setImgbbLink] = useState('')
+
+    const { challenge_name, img, start_date, end_date, description, level } = challengeDetails
+
+    useEffect(() => {
+        fetch(`https://secret-taiga-12395.herokuapp.com/challenge/${id}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                setChallengeDetails(data)
+            })
+    }, [id])
+
     // Form handle function
-    const handleFormSubmit = e => {
+    const handleUpdateForm = e => {
         e.preventDefault();
-
-        // fileds value
-        const challenge_name = e.target.challenge_name.value
-        const start_date = e.target.start_date.value
-        const end_date = e.target.end_date.value
-        const description = e.target.description.value
-        const level = e.target.select_level.value
+        const challengeName = e.target.challenge_name.value
+        const startDate = e.target.start_date.value
+        const endDate = e.target.end_date.value
+        const upDescription = e.target.description.value
+        const upLevel = e.target.select_level.value
 
         // imgbb api key
         const imgApi_key = '023b6c6c8013115f542e3d99977afbfd'
@@ -21,7 +41,7 @@ const CreateChallenge = () => {
         const formData = new FormData()
         formData.append('image', image)
 
-        if (challenge_name && start_date && end_date && description && level && image) {
+        if (name || s_date || e_date || desc || updatelevel || image || updatelevel) {
             // Upload image to imgbb through imgbb api
             const url = `https://api.imgbb.com/1/upload?key=${imgApi_key}`
             fetch(url, {
@@ -29,58 +49,54 @@ const CreateChallenge = () => {
                 body: formData
             })
                 .then(res => res.json())
-                .then(result => {
-                    if (result.success) {
-                        const img = result.data.url
-                        const data = {
-                            challenge_name,
-                            start_date,
-                            end_date,
-                            description,
-                            level,
-                            img
-                        }
-                        // Upload data into database
-                        fetch('https://secret-taiga-12395.herokuapp.com/challenge', {
-                            method: 'POST',
-                            headers: {
-                                'content-type': 'application/json'
-                            },
-                            body: JSON.stringify(data)
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                                if (data.acknowledged === true) {
-                                    toast.success('Challenge created Successfully!')
-                                }
-                            })
+                .then(result => setImgbbLink(result.data.url))
+
+            const data = {
+                challenge_name: challengeName,
+                start_date: startDate,
+                end_date: endDate,
+                description: upDescription,
+                level: upLevel,
+                img: imgbbLink || img
+            }
+            // Upload data into database
+            fetch(`https://secret-taiga-12395.herokuapp.com/challenge/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.acknowledged === true) {
+                        toast.success('Challenge updated Successfully!')
                     }
-                    e.target.reset()
                 })
-        } else {
-            toast.warning('Please, Fill the form to create a challenge!')
         }
+
     }
 
     return (
         <div>
             <div className='create-challenge-heading'>
                 <div className='container d-flex' style={{ paddingTop: '32px', width: '1000px', margin: '0 auto' }}>
-                    <h2>Create Challenge</h2>
+                    <h2>Update Challenge</h2>
                 </div>
             </div>
             <div
                 style={{ width: '1000px', margin: '0 auto' }}
                 className="create-challenge-form container mt-4 mb-5">
                 <Form
-                    onSubmit={handleFormSubmit}
-
+                    onSubmit={handleUpdateForm}
                 >
                     <Form.Group className="mb-3 mt-4" controlId="formBasicEmail">
                         <Form.Label className='small'>Challenge Name</Form.Label>
                         <div className="row">
                             <div className="col-sm-4">
                                 <Form.Control
+                                    onChange={(e) => setName(e.target.value)}
+                                    value={name || challenge_name}
                                     className='' name='challenge_name' type="text" placeholder="Challenge Name" />
                             </div>
                         </div>
@@ -91,6 +107,8 @@ const CreateChallenge = () => {
                         <div className="row">
                             <div className="col-sm-4">
                                 <Form.Control
+                                    onChange={(e) => setS_Date(e.target.value)}
+                                    value={s_date || start_date}
                                     name='start_date' type="date" placeholder="Start Date- 22/2/22" />
                             </div>
                         </div>
@@ -101,6 +119,8 @@ const CreateChallenge = () => {
                         <div className="row">
                             <div className="col-sm-4">
                                 <Form.Control
+                                    onChange={(e) => setE_Date(e.target.value)}
+                                    value={e_date || end_date}
                                     name='end_date' type="date" placeholder="Enter email" />
                             </div>
                         </div>
@@ -111,6 +131,8 @@ const CreateChallenge = () => {
                         <div className="row">
                             <div className="col-sm-6">
                                 <Form.Control
+                                    onChange={(e) => setDesc(e.target.value)}
+                                    value={desc || description}
                                     name='description' as="textarea" rows={3} />
                             </div>
                         </div>
@@ -120,6 +142,7 @@ const CreateChallenge = () => {
                         <Form.Label className='small'>Image</Form.Label>
                         <div class='row'>
                             <div className="col-sm-3">
+                                <img width='150' className='mb-2' src={img} alt="" />
                                 <Form.Control
                                     name='image' type="file" size="sm" />
                             </div>
@@ -132,6 +155,8 @@ const CreateChallenge = () => {
                         <div class='row'>
                             <div className="col-sm-3">
                                 <Form.Select
+                                    value={updatelevel || level}
+                                    onChange={(e) => setUpdateLevel(e.target.value)}
                                     size="sm" name='select_level'>
                                     <option value='easy'>Easy</option>
                                     <option value='medium'>Medium</option>
@@ -142,7 +167,7 @@ const CreateChallenge = () => {
                     </Form.Group>
 
                     <Button variant="" type="submit" className='mt-2' style={{ borderRadius: '8px', padding: '6px 15px', color: '#fff', background: '#44924C' }}>
-                        Create Challenge
+                        Update Challenge
                     </Button>
                 </Form>
             </div>
@@ -150,4 +175,4 @@ const CreateChallenge = () => {
     );
 };
 
-export default CreateChallenge;
+export default UpdateChallenge;

@@ -1,44 +1,83 @@
 import React, { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import ChallengesCards from './ChallengesCards';
+import {useNavigate} from 'react-router-dom'
 
 const ExploreChallenges = () => {
     const [filterShow, setFilterShow] = useState(false)
-    const [filteredValue, setFilteredValue] = useState([])
-
-
-    console.log(typeof filteredValue)
+    const [challengesData, getChallengesData] = useState([])
+    const [filterData, getFilterData] = useState([])
+    const navigate = useNavigate()
+    const [search, setSearch] = useState('')
+    console.log(search)
     
+    const [allChecked, setAllChecked] = useState('')
+    const [activeChecked, setActiveChecked] = useState('')
+    const [upcomingChecked, setUpcomingChecked] = useState('')
+    const [fastChecked, setFastChecked] = useState('')
+
     useEffect(() => {
-        console.log(filteredValue);
-    }, [filteredValue])
+        fetch(`https://secret-taiga-12395.herokuapp.com/challenge?challenge_name=${search}`)
+            .then(res => res.json())
+            .then(data => getChallengesData(data))
+    }, [search])
+
+    // filter data load
+    useEffect(() => {
+        fetch(`https://secret-taiga-12395.herokuapp.com/challenge/filter?all=${allChecked}&active=${activeChecked}&upcoming=${upcomingChecked}&fast=${fastChecked}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                getFilterData(data)
+            })
+
+    }, [allChecked, activeChecked, upcomingChecked, fastChecked])
+
+
+    // Checking filtered or not
+    let data = [];
+    if(filterData.length > 0){
+        data = filterData
+    } else {
+        data = challengesData
+    }
+
+    // console.log(filterData, data);
 
     const handleAllChecked = (e) => {
         const checked = e.target.checked
         const allValue = e.target.value
         if (checked) {
-            setFilteredValue([...filteredValue, allValue])
+            setAllChecked(allValue)
+        } else {
+            setAllChecked('')
         }
     }
     const handleActiveChecked = (e) => {
         const checked = e.target.checked
         const activeValue = e.target.value
         if (checked) {
-            setFilteredValue([...filteredValue, activeValue])
+            setActiveChecked(activeValue)
+        } else {
+            setActiveChecked('')
         }
     }
     const handleUpcomingChecked = (e) => {
         const checked = e.target.checked
         const upcomingValue = e.target.value
         if (checked) {
-            setFilteredValue([...filteredValue, upcomingValue])
+            setUpcomingChecked(upcomingValue)
+        } else {
+            setUpcomingChecked('')
         }
     }
     const handleFastChecked = (e) => {
         const checked = e.target.checked
         const fastValue = e.target.value
         if (checked) {
-            setFilteredValue([...filteredValue, fastValue])
+            setFastChecked(fastValue)
+        } else {
+            setFastChecked('')
         }
     }
 
@@ -50,7 +89,8 @@ const ExploreChallenges = () => {
 
                     <div className='row mt-4 search-section'>
                         <div className='col-sm-9'>
-                            <Form.Control sm='sm' type="text" placeholder="Search" />
+                            <Form.Control onChange={(e)=> setSearch(e.target.value)}
+                            sm='sm' type="text" placeholder="Search" />
                         </div>
                         <div className='col-sm-3' style={{ zIndex: '50' }}>
                             <div className='filter-section' role='button'>
@@ -93,7 +133,7 @@ const ExploreChallenges = () => {
                                         <div className="input-box">
                                             <input
                                                 onChange={handleFastChecked}
-                                                type="checkbox" id="fast" name="fast" value="Bike" />
+                                                type="checkbox" id="fast" name="fast" value="fast" />
                                             <label for="fast">Fast</label><br />
                                         </div>
                                     </div>
@@ -118,7 +158,7 @@ const ExploreChallenges = () => {
                         </div>
                     </div>
 
-              
+
 
 
                 </div>
@@ -127,8 +167,20 @@ const ExploreChallenges = () => {
 
             {/* Explore section's challenges parts */}
             <div className='text-white explore-challenges-part'>
-                <ChallengesCards />
+                <div className='challenge-cards-section py-5'>
+                    <div className='custom-width'>
+                        <div className='row gy-5 gx-4 text-black text-center'>
+                            {data.length  > 0 ? data.map(d => <ChallengesCards
+                                data={d}
+                            />) : <p className='text-white'>Nothing to show. <button
+                                onClick={() => navigate('/create-challenge')}
+                                className="btn btn-light rounded">Create a new One</button> </p>}
+                        </div>
+
+                    </div>
+                </div>
             </div>
+
         </div>
     );
 };
