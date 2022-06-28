@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import ChallengesCards from './ChallengesCards';
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const ExploreChallenges = () => {
     const [filterShow, setFilterShow] = useState(false)
@@ -9,41 +9,53 @@ const ExploreChallenges = () => {
     const [filterData, getFilterData] = useState([])
     const navigate = useNavigate()
     const [search, setSearch] = useState('')
-    console.log(search)
-    
+    const [getSearchData, setGetSearchData] = useState('')
+
     const [allChecked, setAllChecked] = useState('')
     const [activeChecked, setActiveChecked] = useState('')
     const [upcomingChecked, setUpcomingChecked] = useState('')
     const [fastChecked, setFastChecked] = useState('')
 
+    const [easy, setEasy] = useState('')
+    const [medium, setMedium] = useState('')
+    const [hard, setHard] = useState('')
+
     useEffect(() => {
-        fetch(`https://secret-taiga-12395.herokuapp.com/challenge?challenge_name=${search}`)
+        fetch(`https://secret-taiga-12395.herokuapp.com/challenge`)
             .then(res => res.json())
             .then(data => getChallengesData(data))
+    }, [])
+
+
+    useEffect(() => {
+        fetch(`https://secret-taiga-12395.herokuapp.com/challenge/search?challenge_name=${search}`)
+            .then(res => res.json())
+            .then(data => setGetSearchData(data))
     }, [search])
 
     // filter data load
     useEffect(() => {
-        fetch(`https://secret-taiga-12395.herokuapp.com/challenge/filter?all=${allChecked}&active=${activeChecked}&upcoming=${upcomingChecked}&fast=${fastChecked}`)
+        fetch(`https://secret-taiga-12395.herokuapp.com/challenge/filter?all=${allChecked}&active=${activeChecked}&upcoming=${upcomingChecked}&fast=${fastChecked}&easy=${easy}&medium=${medium}&hard=${hard}`)
             .then(res => res.json())
             .then(data => {
                 console.log(data);
                 getFilterData(data)
             })
 
-    }, [allChecked, activeChecked, upcomingChecked, fastChecked])
+    }, [allChecked, activeChecked, upcomingChecked, fastChecked, easy, medium, hard])
 
 
     // Checking filtered or not
     let data = [];
-    if(filterData.length > 0){
+    if (search.length > 0) {
+        data = getSearchData
+    } else if (filterData.length > 0) {
         data = filterData
     } else {
         data = challengesData
     }
 
-    // console.log(filterData, data);
-
+    // Handle status filtered
     const handleAllChecked = (e) => {
         const checked = e.target.checked
         const allValue = e.target.value
@@ -81,6 +93,43 @@ const ExploreChallenges = () => {
         }
     }
 
+    // handle level filtered
+    const handleEasyChecked = (e) => {
+        const checked = e.target.checked
+        const easyValue = e.target.value
+        if (checked) {
+            setEasy(easyValue)
+        } else {
+            setEasy('')
+        }
+    }
+
+    const handleMediumChecked = (e) => {
+        const checked = e.target.checked
+        const mediumValue = e.target.value
+        if (checked) {
+            setMedium(mediumValue)
+        } else {
+            setMedium('')
+        }
+    }
+
+    const handleHardChecked = (e) => {
+        const checked = e.target.checked
+        const hardValue = e.target.value
+        if (checked) {
+            setHard(hardValue)
+        } else {
+            setHard('')
+        }
+    }
+
+    // Seach input handle onchange
+    const handleSearchonChange = e => {
+        const search = e.target.value
+        setSearch(search)
+    }
+
     return (
         <div>
             <div className='explore-top-part text-center py-5'>
@@ -89,8 +138,9 @@ const ExploreChallenges = () => {
 
                     <div className='row mt-4 search-section'>
                         <div className='col-sm-9'>
-                            <Form.Control onChange={(e)=> setSearch(e.target.value)}
-                            sm='sm' type="text" placeholder="Search" />
+                            <Form.Control
+                                onChange={handleSearchonChange} name='search'
+                                sm='sm' type="text" placeholder="Search" />
                         </div>
                         <div className='col-sm-3' style={{ zIndex: '50' }}>
                             <div className='filter-section' role='button'>
@@ -141,15 +191,20 @@ const ExploreChallenges = () => {
                                         <p className='small'>Level</p>
                                         <div className="input-box">
                                             <input
+                                                onChange={handleEasyChecked}
                                                 type="checkbox" id="easy" name="easy" value="easy" />
                                             <label for="easy">Easy</label><br />
                                         </div>
                                         <div className="input-box">
-                                            <input type="checkbox" id="medium" name="medium" value="medium" />
+                                            <input
+                                                onChange={handleMediumChecked}
+                                                type="checkbox" id="medium" name="medium" value="medium" />
                                             <label for="medium">Medium</label><br />
                                         </div>
                                         <div className="input-box">
-                                            <input type="checkbox" id="hard" name="hard" value="hard" />
+                                            <input
+                                                onChange={handleHardChecked}
+                                                type="checkbox" id="hard" name="hard" value="hard" />
                                             <label for="hard">Hard</label><br />
                                         </div>
                                     </div>
@@ -157,9 +212,6 @@ const ExploreChallenges = () => {
                             </div>
                         </div>
                     </div>
-
-
-
 
                 </div>
             </div>
@@ -170,7 +222,7 @@ const ExploreChallenges = () => {
                 <div className='challenge-cards-section py-5'>
                     <div className='custom-width'>
                         <div className='row gy-5 gx-4 text-black text-center'>
-                            {data.length  > 0 ? data.map(d => <ChallengesCards
+                            {data.length > 0 ? data.map(d => <ChallengesCards
                                 data={d}
                             />) : <p className='text-white'>Nothing to show. <button
                                 onClick={() => navigate('/create-challenge')}

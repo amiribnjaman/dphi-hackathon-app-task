@@ -37,6 +37,7 @@ const Details = () => {
                 if (data) {
                     handleClose();
                     <Navigate to='/' />
+                    navigate('/')
                 }
             })
     }
