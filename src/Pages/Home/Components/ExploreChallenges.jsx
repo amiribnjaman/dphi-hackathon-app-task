@@ -21,21 +21,21 @@ const ExploreChallenges = () => {
     const [hard, setHard] = useState('')
 
     useEffect(() => {
-        fetch(`https://secret-taiga-12395.herokuapp.com/challenge`)
+        fetch(`https://dphi-server.onrender.com/challenge`)
             .then(res => res.json())
             .then(data => getChallengesData(data))
     }, [])
 
 
     useEffect(() => {
-        fetch(`https://secret-taiga-12395.herokuapp.com/challenge/search?challenge_name=${search}`)
+        fetch(`https://dphi-server.onrender.com/challenge/search?challenge_name=${search}`)
             .then(res => res.json())
             .then(data => setGetSearchData(data))
     }, [search])
 
     // filter data load
     useEffect(() => {
-        fetch(`https://secret-taiga-12395.herokuapp.com/challenge/filter?all=${allChecked}&active=${activeChecked}&upcoming=${upcomingChecked}&fast=${fastChecked}&easy=${easy}&medium=${medium}&hard=${hard}`)
+        fetch(`https://dphi-server.onrender.com/challenge/filter?all=${allChecked}&active=${activeChecked}&upcoming=${upcomingChecked}&fast=${fastChecked}&easy=${easy}&medium=${medium}&hard=${hard}`)
             .then(res => res.json())
             .then(data => {
                 console.log(data);

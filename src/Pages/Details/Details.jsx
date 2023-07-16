@@ -18,7 +18,7 @@ const Details = () => {
 
     // load the data 
     useEffect(() => {
-        fetch(`https://secret-taiga-12395.herokuapp.com/challenge/${id}`)
+        fetch(`https://dphi-server.onrender.com/challenge/${id}`)
             .then(res => res.json())
             .then(data => {
                 console.log(data);
@@ -29,7 +29,7 @@ const Details = () => {
 
     // delete button
     const handleDeleteChallenge = () => {
-        fetch(`https://secret-taiga-12395.herokuapp.com/challenge/${id}`, {
+        fetch(`https://dphi-server.onrender.com/challenge/${id}`, {
             method: 'DELETE'
         })
             .then(res => res.json())

@@ -18,7 +18,7 @@ const UpdateChallenge = () => {
     const { challenge_name, img, start_date, end_date, description, level } = challengeDetails
 
     useEffect(() => {
-        fetch(`https://secret-taiga-12395.herokuapp.com/challenge/${id}`)
+        fetch(`https://dphi-server.onrender.com/challenge/${id}`)
             .then(res => res.json())
             .then(data => {
                 console.log(data);
@@ -60,7 +60,7 @@ const UpdateChallenge = () => {
                 img: imgbbLink || img
             }
             // Upload data into database
-            fetch(`https://secret-taiga-12395.herokuapp.com/challenge/${id}`, {
+            fetch(`https://dphi-server.onrender.com/challenge/${id}`, {
                 method: 'PUT',
                 headers: {
                     'content-type': 'application/json'

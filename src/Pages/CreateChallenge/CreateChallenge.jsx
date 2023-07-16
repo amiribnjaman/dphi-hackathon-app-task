@@ -41,7 +41,7 @@ const CreateChallenge = () => {
                             img
                         }
                         // Upload data into database
-                        fetch('https://secret-taiga-12395.herokuapp.com/challenge', {
+                        fetch('https://dphi-server.onrender.com/challenge', {
                             method: 'POST',
                             headers: {
                                 'content-type': 'application/json'
